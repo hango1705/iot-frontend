@@ -41,7 +41,24 @@ body {
     /* Tạo hình tròn cho avatar */
     border: 2px solid #fff;
 }
+.logout-button {
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
 
+/* Hiệu ứng khi hover */
+.logout-button:hover {
+    color: #0056b3;
+}
+.navbar-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 180px;
+}
 .main-container {
     display: flex; 
     flex-direction: column; 
@@ -94,44 +111,62 @@ body {
     width: 70%;
     height: 500px;
     text-align: center;
-}
-canvas {
-    width: 100% !important;  
-    height: 100% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .warning-container {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
     background: #fff;
-    padding: 40px;
+    padding: 30px 40px;
+    margin-top: 50px;
     margin-bottom: 50px;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     width: 70%;
-    height: 500px;
+    height: auto;
     text-align: center;
-}
-.warning-message {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    color: #fff;
-    transition: background-color 0.5s ease;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    font-size: 1.2em;
 }
 
-.warning-message p {
-    margin: 0;
+.warning-container.normal {
+    background-color: #4CAF50; /* Xanh lá cây cho nước tốt */
+    color: white;
 }
 
-.warning-message.safe {
-    background-color: green;  /* An toàn */
+.warning-container.warning {
+    background-color: #FF9800; /* Cam cho nước có vấn đề */
+    color: white;
 }
 
-.warning-message.warning {
-    background-color: yellow;  /* Cảnh báo */
+.warning-container.danger {
+    background-color: #F44336; /* Đỏ cho nước nguy hiểm */
+    color: white;
 }
 
-.warning-message.danger {
-    background-color: red;  /* Nguy hiểm */
+.warning-container.normal .icon {
+    color: #4CAF50;
+}
+
+.warning-container.warning .icon {
+    color: #FF9800;
+}
+
+.warning-container.danger .icon {
+    color: #F44336;
+}
+
+/* Thêm biểu tượng cho cảnh báo */
+.warning-container .icon {
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+.warning-container:hover {
+    transform: scale(1.05);
 }
 span {
     font-size: larger;

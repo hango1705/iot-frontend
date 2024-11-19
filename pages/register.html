@@ -7,17 +7,18 @@
   <link rel="stylesheet" href="../css/register.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="../assets/favicon.ico" />
+  <script type="module" src="../js/register.js"></script>
 </head>
 <body>
   <div class="register-container">
     <div class="register-form">
       <div class="logo">
         <a href="../index.html">
-            <img src="../assets/logo.png" alt="Logo" />
-          </a>
+          <img src="../assets/logo.png" alt="Logo" />
+        </a>
         <h2>Đăng ký tài khoản</h2>
       </div>
-      <form action="/register" method="POST">
+      <form id="register-form">
         <div class="input-group">
           <label for="fullname">Họ và tên</label>
           <input type="text" id="fullname" name="fullname" placeholder="Nhập họ và tên" required>

@@ -7,7 +7,7 @@
     <title>Trang Chính - Hệ thống giám sát chất lượng nước uống</title>
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="icon" type="image/png" href="../assets/favicon.ico" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justgage@1.4.7/justgage.min.css" />
+    <script type="module" src="../js/dashboard.js"></script>
 </head>
 
 <body>
@@ -18,8 +18,11 @@
                 <img src="../assets/logo.png" alt="Logo" />
             </a>
         </div>
-        <div class="navbar-avatar">
-            <img src="../assets/avatar.png" alt="Avatar" />
+        <div class="navbar-info">
+            <div class="navbar-avatar">
+                <img src="../assets/avatar.png" alt="Avatar" />
+            </div>
+            <span id="logout-button" class="logout-button">Đăng xuất</span>
         </div>
     </nav>
 
@@ -31,9 +34,7 @@
         <span>Thông tin về chỉ số chất lượng nước</span>
         <div class="infor-container">
             <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"> </script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.7.0/justgage.min.js"
-                integrity="sha512-2Vl2VsnJJj7RGidJ9wYkD48AvsDpc2Pqj+e9jjFJpQ7i2i8F3R767QepucFXDGBrKjXhcl/makkhWR3g7KFVsw=="
-                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdn.jsdelivr.net/npm/justgage@1.7.0/justgage.min.js"></script>
             <div>
                 <span>Chỉ số TDS</span>
                 <div id="tds-gauge" class="gauge"></div>
@@ -50,11 +51,8 @@
         </div>
         <span>Cảnh báo</span>
         <div class="warning-container">
-            <div id="tds-warning" class="warning-message">
-                <p><strong>Cảnh báo TDS:</strong> <span id="tds-value">0</span> mg/L</p>
-            </div>
-            <div id="temperature-warning" class="warning-message">
-                <p><strong>Cảnh báo Nhiệt độ:</strong> <span id="temperature-value">0</span> °C</p>
+            <div class="warning-container" id="warning-container">
+                <!-- Cảnh báo sẽ được hiển thị ở đây -->
             </div>
         </div>
     </div>

@@ -1,140 +1,121 @@
-window.onload = function() {
-    // Khởi tạo các Gauge cho TDS và Nhiệt độ
-    var tdsGauge = new JustGage({
-        id: "tds-gauge",
-        value: 150,
-        min: 0,
-        max: 1000,
-        title: "TDS",
-        label: "mg/L",
-        valueFontColor: "#000",
-        titleFontColor: "#000",
-        gaugeWidthScale: 0.1,
-        donut: true,
-        counter: true,
-        startAnimationTime: 2,
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+// Cấu hình Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyBRjbw-L9EV4lbR82JoO-zrAuBCMcJ7ZGU",
+    authDomain: "water-monitoring-111ad.firebaseapp.com",
+    databaseURL: "https://water-monitoring-111ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "water-monitoring-111ad",
+    storageBucket: "water-monitoring-111ad.firebasestorage.app",
+    messagingSenderId: "212577000704",
+    appId: "1:212577000704:web:58ea7dd133825b431fe7e5",
+    measurementId: "G-DPVPY60RVR"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth();
+
+// Xử lý sự kiện khi nhấn vào nút Đăng xuất
+document.getElementById('logout-button').addEventListener('click', function () {
+    signOut(auth).then(() => {
+        // Đăng xuất thành công, chuyển hướng về trang index.html
+        window.location.href = "../index.html";  // Chuyển hướng về trang index.html
+    }).catch((error) => {
+        // Xử lý lỗi nếu có
+        console.error('Lỗi đăng xuất:', error);
     });
+});
 
-    var temperatureGauge = new JustGage({
-        id: "temperature-gauge",
-        value: 25,
-        min: -10,
-        max: 50,
-        title: "Nhiệt độ",
-        label: "°C",
-        valueFontColor: "#000",
-        titleFontColor: "#000",
-        gaugeWidthScale: 0.1,
-        donut: true,
-        counter: true,
-        startAnimationTime: 2,
-    });
+// Khởi tạo các Gauge
+var tdsGauge = new JustGage({
+    id: "tds-gauge",
+    value: 150,
+    min: 0,
+    max: 1200,
+    title: "TDS",
+    label: "mg/L",
+    decimals: 2,
+    levelColors: [
+        "#00ff00", // Xanh lá cây cho giá trị thấp
+        "#ffff00", // Vàng cho giá trị trung bình
+        "#ff0000"  // Đỏ cho giá trị cao
+    ],
+    levelColorsGradient: true
+});
 
-    // Cấu hình biểu đồ Line Chart
-    var ctx = document.getElementById('chart').getContext('2d');
-    var chart = new Chart(ctx, {
-        type: 'line',  // Dạng biểu đồ là Line
-        data: {
-            labels: [],  // Mảng trống ban đầu
-            datasets: [{
-                label: 'TDS (mg/L)',
-                borderColor: 'rgb(75, 192, 192)',  // Màu đường biểu đồ TDS
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                data: [],  // Mảng chứa dữ liệu TDS
-                fill: true,
-            }, {
-                label: 'Nhiệt độ (°C)',
-                borderColor: 'rgb(255, 99, 132)',  // Màu đường biểu đồ Nhiệt độ
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                data: [],  // Mảng chứa dữ liệu Nhiệt độ
-                fill: true,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    type: 'linear',  // Trục X dạng tuyến tính
-                    position: 'bottom',
-                    title: {
-                        display: true,
-                        text: 'Thời gian (Phút)',
-                    },
-                    ticks: {
-                        stepSize: 5,  // Bước trục X là 5 phút
-                        callback: function(value) {
-                            return value + 'm';  // Hiển thị trục thời gian dưới dạng phút
-                        }
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Giá trị'
-                    }
-                }
-            }
-        }
-    });
+var temperatureGauge = new JustGage({
+    id: "temperature-gauge",
+    value: 25,
+    min: 0,
+    max: 50,
+    title: "Nhiệt độ",
+    label: "°C",
+    decimals: 2,
+    levelColors: [
+        "#00ff00", // Xanh lá cây cho giá trị thấp
+        "#ffff00", // Vàng cho giá trị trung bình
+        "#ff0000"  // Đỏ cho giá trị cao
+    ],
+    levelColorsGradient: true
+});
 
-    // Hàm cập nhật cảnh báo
-    function updateWarningMessages(tds, temperature) {
-        var tdsWarningElement = document.getElementById("tds-warning");
-        var temperatureWarningElement = document.getElementById("temperature-warning");
-        var tdsValueElement = document.getElementById("tds-value");
-        var temperatureValueElement = document.getElementById("temperature-value");
+// Cấu hình biểu đồ
+var ctx = document.getElementById('chart').getContext('2d');
+var chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'TDS (mg/L)',
+            data: [],
+            borderColor: 'rgb(75, 192, 192)',
+            fill: true,
+        }, {
+            label: 'Nhiệt độ (°C)',
+            data: [],
+            borderColor: 'rgb(255, 99, 132)',
+            fill: true,
+        }]
+    }
+});
 
-        // Cập nhật giá trị TDS
-        tdsValueElement.textContent = tds;
-        if (tds > 500) {
-            tdsWarningElement.classList.remove("safe", "warning");
-            tdsWarningElement.classList.add("danger");
-        } else if (tds > 200) {
-            tdsWarningElement.classList.remove("safe", "danger");
-            tdsWarningElement.classList.add("warning");
-        } else {
-            tdsWarningElement.classList.remove("danger", "warning");
-            tdsWarningElement.classList.add("safe");
-        }
+// Lắng nghe dữ liệu từ Firebase
+const sensorDataRef = ref(db, "sensorData");
+onValue(sensorDataRef, (snapshot) => {
+    const data = snapshot.val();
+    const tdsValue = data.TDS || 0;
+    const temperature = data.Temperature || 0;
 
-        // Cập nhật giá trị Nhiệt độ
-        temperatureValueElement.textContent = temperature;
-        if (temperature > 40 || temperature < 0) {
-            temperatureWarningElement.classList.remove("safe", "warning");
-            temperatureWarningElement.classList.add("danger");
-        } else if (temperature > 30 || temperature < 10) {
-            temperatureWarningElement.classList.remove("safe", "danger");
-            temperatureWarningElement.classList.add("warning");
-        } else {
-            temperatureWarningElement.classList.remove("danger", "warning");
-            temperatureWarningElement.classList.add("safe");
-        }
+    tdsGauge.refresh(tdsValue);
+    temperatureGauge.refresh(temperature);
+
+    chart.data.labels.push(new Date().toLocaleTimeString());
+    chart.data.datasets[0].data.push(tdsValue);
+    chart.data.datasets[1].data.push(temperature);
+    chart.update();
+
+
+  const warningContainer = document.getElementById('warning-container');
+    let warningMessage = '';
+    let warningClass = '';
+    let icon = '';
+
+    if (tdsValue <= 300 && temperature >= 0 && temperature <= 35) {
+        warningMessage = 'Chất lượng nước tốt!';
+        warningClass = 'normal';
+        icon = '✔️';
+    } else if (tdsValue > 300 && tdsValue <= 600 || temperature > 35 && temperature <= 45) {
+        warningMessage = 'Nước có vấn đề!';
+        warningClass = 'warning';
+        icon = '⚠️';
+    } else {
+        warningMessage = 'Nước không an toàn!';
+        warningClass = 'danger';
+        icon = '❌';
     }
 
-    // Hàm cập nhật dữ liệu và biểu đồ
-    var currentMinute = 0;  // Bắt đầu từ phút 0
-    setInterval(function() {
-        if (currentMinute >= 1440) {  // Nếu đã đạt 24 giờ (1440 phút)
-            currentMinute = 0;  // Reset lại phút
-        }
-
-        // Giả sử mỗi 1 phút dữ liệu sẽ được cập nhật
-        var currentTDS = Math.floor(Math.random() * 1000); // Giá trị TDS ngẫu nhiên
-        var currentTemperature = Math.floor(Math.random() * 40) - 10; // Giá trị Nhiệt độ ngẫu nhiên
-
-        // Thêm dữ liệu vào biểu đồ
-        chart.data.labels.push(currentMinute);  // Thêm thời gian vào trục X
-        chart.data.datasets[0].data.push(currentTDS);  // Dữ liệu TDS
-        chart.data.datasets[1].data.push(currentTemperature);  // Dữ liệu Nhiệt độ
-
-        // Cập nhật lại biểu đồ
-        chart.update();
-
-        // Cập nhật cảnh báo dựa trên giá trị TDS và Nhiệt độ
-        updateWarningMessages(currentTDS, currentTemperature);
-
-        // Tăng thời gian lên 1 phút
-        currentMinute++;
-    }, 60000); // Cập nhật mỗi phút (60000ms)
-};
+    warningContainer.className = `warning-container ${warningClass}`;
+    warningContainer.innerHTML = `<div class="icon">${icon}</div><p>${warningMessage}</p>`;
+});

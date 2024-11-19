@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../css/login.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="../assets/favicon.ico" />
+  <script type="module" src="../js/login.js"></script>
 </head>
 <body>
   <div class="login-container">
@@ -17,7 +18,7 @@
           </a>
         <h2>Đăng nhập tài khoản</h2>
       </div>
-      <form action="/login" method="POST">
+      <form id="login-form">
         <div class="input-group">
           <label for="username">Email/Tên đăng nhập</label>
           <input type="text" id="username" name="username" placeholder="Nhập email hoặc tên đăng nhập" required>
